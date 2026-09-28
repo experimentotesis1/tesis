@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experimento Económico</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #dae7e9;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .contenedor {
+            background-color: #dae7e9;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        h1 {
+            font-family: 'Sorts Mill Goudy', serif;
+            color: black;
+            font-size: 36px;
+            margin-top: 0;
+            line-height: 1.2;
+        }
+        .texto-pregunta {
+            font-family: 'Sorts Mill Goudy', serif;
+            color: black;
+            font-size: 22px;
+            margin-bottom: 15px;
+            margin-top: 25px;
+            text-align: left;
+            line-height: 1.3;
+        }
+        .texto-centro {
+            text-align: center;
+            margin-top: 0;
+        }
+        input[type="text"], input[type="number"] {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            text-align: center;
+        }
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .mensaje-error {
+            color: red;
+            font-size: 14px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        .opciones {
+            text-align: left;
+            margin: 0 auto 10px auto;
+            display: block;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 18px;
+        }
+        .opcion-item {
+            margin-bottom: 10px;
+            cursor: pointer;
+            line-height: 1.3;
+        }
+        input[type="radio"] {
+            transform: scale(1.3);
+            margin-right: 12px;
+            cursor: pointer;
+            vertical-align: middle;
+        }
+        button {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #1a252f;
+        }
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        .primera-pregunta {
+            margin-top: 0;
+        }
+        p { font-family: 'Times New Roman', Times, serif; font-size: 22px; color: #333; line-height: 1.4; }
+        .caja-instrucciones {
+            background-color: white;
+            border: 2px solid #2c3e50;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .caja-advertencia {
+            background-color: #fff8e1;
+            border: 2px solid #f39c12;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: left;
+        }
+        .caja-descalificacion {
+            background-color: #fdecea;
+            border: 2px solid #c0392b;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .pantalla-fase {
+            padding: 20px;
+        }
+        .imagen-tarea {
+            max-width: 100%;
+            height: auto;
+            max-height: 41vh;
+            object-fit: contain;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            background-color: #fff;
+        }
+        .caja-chat {
+            background: #fff;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            padding: 15px;
+            height: 150px;
+            overflow-y: auto;
+            text-align: left;
+            margin-bottom: 15px;
+            font-family: Arial, sans-serif;
+            font-size: 15px;
+        }
+        .imagen-producto {
+            max-width: 100%;
+            height: auto;
+            max-height: 22vh;
+            object-fit: contain;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            background-color: #fff;
+            padding: 6px;
+            margin: 5px auto 10px auto;
+            display: block;
+        }
+        .lista-resumen {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: left;
+        }
+        .lista-resumen li {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 20px;
+            color: #333;
+            padding: 12px 0;
+            border-bottom: 1px solid #dfe6e9;
+            line-height: 1.3;
+        }
+        .lista-resumen li:last-child {
+            border-bottom: none;
+        }
+        .lista-resumen li strong {
+            color: #2c3e50;
+        }
+        .caja-total {
+            background-color: #2c3e50;
+            color: white;
+            border-radius: 8px;
+            padding: 18px;
+            margin: 20px 0 10px 0;
+            font-family: 'Sorts Mill Goudy', serif;
+            font-size: 26px;
+            line-height: 1.3;
+        }
+        .caja-total span {
+            display: block;
+            font-size: 34px;
+            font-weight: bold;
+            margin-top: 6px;
+        }
+        .mensaje-conversion {
+            font-family: Arial, sans-serif;
+            font-size: 15px;
+            color: #444;
+            line-height: 1.5;
+            text-align: center;
+            margin: 10px 0 0 0;
+        }
+        #super-menu {
+            display: none;
+            background-color: #e74c3c;
+            padding: 8px 10px;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-size: 12px;
+        }
+        #super-menu strong {
+            color: white;
+            margin-right: 3px;
+            font-family: Arial, sans-serif;
+        }
+        #super-menu button {
+            background-color: white;
+            color: #e74c3c;
+            margin: 0 2px;
+            width: auto;
+            padding: 4px 8px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 0;
+            display: inline-block;
+        }
+        #super-menu button:hover {
+            background-color: #f1c40f;
+            color: black;
+        }
+        #btn-dev-grupo {
+            background-color: #27ae60 !important;
+            color: white !important;
+            border: 1px solid white;
+        }
+        #input-dev-puntos {
+            width: 55px;
+            padding: 3px;
+            margin: 0 3px;
+            font-size: 12px;
+            text-align: center;
+            display: inline-block;
+            border-radius: 3px;
+            border: 1px solid white;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MENÚ SUPERUSUARIO -->
+    <div id="super-menu">
+        <strong>DEV:</strong>
+        <button onclick="irAPantalla('pantalla-ingreso')">Ingreso</button>
+        <button onclick="irAPantalla('pantalla-preguntas-1')">P1-P4</button>
+        <button onclick="irAPantalla('pantalla-preguntas-2')">P5</button>
+        <button onclick="irAPantalla('pantalla-instrucciones')">Instrucc.</button>
+        <button onclick="irAPantalla('pantalla-tarea-1')">T1</button>
+        <button onclick="irAPantalla('pantalla-tarea-2')">T2</button>
+        <button onclick="irAPantalla('pantalla-tarea-3')">T3</button>
+        <button onclick="irAPantalla('pantalla-resultado')">Result.</button>
+        <button onclick="irAPantalla('pantalla-negociacion')">Negoc.</button>
+        <button onclick="irAPantalla('pantalla-resumen')">Resumen</button>
+        <button onclick="irAPantalla('pantalla-descalificado')">Descalif.</button>
+        <button onclick="irAPantalla('pantalla-final')">Final</button>
+        <strong style="margin-left: 3px;">Ronda:</strong>
+        <button onclick="cambiarRondaDev()" id="btn-dev-ronda">1</button>
+        <strong style="margin-left: 3px;">Pts:</strong>
+        <input type="number" id="input-dev-puntos" value="3000" onkeydown="manejarEnterPuntos(event)">
+        <strong style="margin-left: 3px;">|</strong>
+        <button id="btn-dev-grupo" onclick="alternarGrupoDev()">Modo 1</button>
+    </div>
+
+    <!-- Pantalla de Ingreso -->
+    <div class="contenedor" id="pantalla-ingreso">
+        <h1>Predictibilidad del ingreso y gasto impulsivo: Un experimento económico.</h1>
+        <p style="font-family: Arial, sans-serif; font-size: 16px;">Por favor, ingresa tu número de participante (Ej: 001, 002) para iniciar.</p>
+        <input type="text" id="codigo-participante" placeholder="000">
+        <div id="error-formato" class="mensaje-error">El código debe tener exactamente 3 dígitos numéricos (Ej: 001).</div>
+        <div id="error-duplicado" class="mensaje-error">Este código ya fue utilizado o el sistema está lleno.</div>
+        <button id="btn-comenzar" onclick="iniciarExperimento()">Comenzar</button>
+    </div>
+
+    <!-- Primera Pantalla: Preguntas 1, 2, 3 y 4 juntas -->
+    <div class="contenedor" id="pantalla-preguntas-1" style="display: none;">
+        <div class="texto-pregunta primera-pregunta">Pregunta 1:<br>¿Con qué sexo te identificas?</div>
+        <div class="opciones">
+            <div class="opcion-item"><label><input type="radio" name="sexo" value="Femenino"> Femenino</label></div>
+            <div class="opcion-item"><label><input type="radio" name="sexo" value="Masculino"> Masculino</label></div>
+            <div class="opcion-item"><label><input type="radio" name="sexo" value="Prefiero no decirlo"> Prefiero no decirlo</label></div>
+        </div>
+
+        <div class="texto-pregunta">Pregunta 2:<br>¿Cuál es su edad?</div>
+        <input type="number" id="input-edad" placeholder="Ej: 21">
+        <div id="error-edad" class="mensaje-error">Debes ingresar una edad válida de 2 dígitos (18 años o más).</div>
+
+        <div class="texto-pregunta">Pregunta 3:<br>¿En qué área de estudio se encuentra actualmente tu carrera?</div>
+        <div class="opciones">
+            <div class="opcion-item"><label><input type="radio" name="area_estudio" value="Administración y Negocios / Ingeniería Comercial"> Administración y Negocios / Ingeniería Comercial</label></div>
+            <div class="opcion-item"><label><input type="radio" name="area_estudio" value="Derecho / Ciencias Jurídicas"> Derecho / Ciencias Jurídicas</label></div>
+            <div class="opcion-item"><label><input type="radio" name="area_estudio" value="Ingeniería y Construcción"> Ingeniería y Construcción</label></div>
+            <div class="opcion-item"><label><input type="radio" name="area_estudio" value="Ciencias Sociales y Humanidades"> Ciencias Sociales y Humanidades</label></div>
+            <div class="opcion-item"><label><input type="radio" name="area_estudio" value="Educación"> Educación</label></div>
+            <div class="opcion-item"><label><input type="radio" name="area_estudio" value="Salud"> Salud</label></div>
+            <div class="opcion-item"><label><input type="radio" name="area_estudio" value="Recursos Naturales"> Recursos Naturales</label></div>
+            <div class="opcion-item"><label><input type="radio" name="area_estudio" value="Otra"> Otra</label></div>
+        </div>
+
+        <div class="texto-pregunta">Pregunta 4:<br>¿Cuál es tu principal fuente o situación de ingresos actual?</div>
+        <div class="opciones">
+            <div class="opcion-item"><label><input type="radio" name="situacion" value="Solo estudiante: mesada o apoyo familiar/terceros"> Solo estudiante: recibo mesada o apoyo económico familiar/de terceros.</label></div>
+            <div class="opcion-item"><label><input type="radio" name="situacion" value="Solo estudiante: ahorros o becas"> Solo estudiante: me financio con ahorros o becas.</label></div>
+            <div class="opcion-item"><label><input type="radio" name="situacion" value="Estudiante con ingresos propios: trabajo o trabajos ocasionales"> Estudiante con ingresos propios: trabajo o realizo trabajos ocasionales.</label></div>
+            <div class="opcion-item"><label><input type="radio" name="situacion" value="Estudiante: recibo manutención/mesada y además trabalho por mi cuenta"> Estudiante: recibo manutención/mesada y además trabajo por mi cuenta.</label></div>
+        </div>
+
+        <div id="error-bloque-1" class="mensaje-error">Por favor, responde todas las preguntas obligatorias antes de continuar.</div>
+        <button onclick="irAPregunta5()">Siguiente</button>
+    </div>
+
+    <!-- Segunda Pantalla: Pregunta 5 -->
+    <div class="contenedor" id="pantalla-preguntas-2" style="display: none;">
+        <div class="texto-pregunta primera-pregunta">Pregunta 5:<br>¿Considerando todas tus fuentes de ingreso, cuál es tu ingreso total aproximado mensual?</div>
+        <p style="font-size: 15px; text-align: left; color: #555; margin-top: -10px; margin-bottom: 15px;">*Incluye sueldo, trabajos ocasionales, mesadas, apoyo económico familiar, becas, ahorros u otras fuentes.</p>
+
+        <div class="opciones" style="font-size: 18px;">
+            <div class="opcion-item"><label><input type="radio" name="ingreso" value="$0"> $0</label></div>
+            <div class="opcion-item"><label><input type="radio" name="ingreso" value="Entre $1 y $100.000"> Entre $1 y $100.000</label></div>
+            <div class="opcion-item"><label><input type="radio" name="ingreso" value="Entre $100.001 y $300.000"> Entre $100.001 y $300.000</label></div>
+            <div class="opcion-item"><label><input type="radio" name="ingreso" value="Entre $300.001 y $500.000"> Entre $300.001 y $500.000</label></div>
+            <div class="opcion-item"><label><input type="radio" name="ingreso" value="Entre $500.001 y $1.000.000"> Entre $500.001 y $1.000.000</label></div>
+            <div class="opcion-item"><label><input type="radio" name="ingreso" value="Más de $1.000.000"> Más de $1.000.000</label></div>
+        </div>
+
+        <div id="error-p5" class="mensaje-error">Por favor, selecciona una alternativa para continuar.</div>
+        <button id="btn-guardar-perfil" onclick="guardarYContinuar()">Finalizar Cuestionario</button>
+    </div>
+
+    <!-- Pantalla de Instrucciones -->
+    <div class="contenedor" id="pantalla-instrucciones" style="display: none;">
+        <div class="texto-pregunta texto-centro primera-pregunta" id="titulo-instrucciones">Fase de Obtención de Ingresos (Ronda 1)</div>
+        <p id="subtitulo-instrucciones">A continuación, realizarás 3 tareas de concentración contando elementos específicos en los textos que se te presentarán.</p>
+        <div class="caja-instrucciones">
+            <p style="margin: 0; text-align: left;"><strong>Instrucciones:</strong></p>
+            <p style="margin-top: 10px; font-size: 20px; text-align: left;">Responde con atención cada una de las 3 tareas. Al finalizar, el sistema evaluará tus aciertos para determinar tu puntaje total acumulado.</p>
+        </div>
+        <button onclick="comenzarTareas()">Entendido, comenzar tareas</button>
+    </div>
+
+    <!-- Tarea 1 -->
+    <div class="contenedor pantalla-fase" id="pantalla-tarea-1" style="display: none;">
+        <div class="texto-pregunta texto-centro primera-pregunta" id="label-num-t1" style="font-size: 22px; margin-bottom: 5px;">Ronda 1 - Tarea 1 de 3</div>
+        <img id="img-tarea-1" src="" alt="Texto para contar" class="imagen-tarea">
+        <div class="texto-pregunta" id="enunciado-t1" style="margin-top: 5px; font-size: 18px; margin-bottom: 5px;"></div>
+        <input type="number" id="respuesta-tarea-1" placeholder="Ingresa la cantidad aquí">
+        <div id="error-respuesta-1" class="mensaje-error">Por favor, ingresa un número antes de continuar.</div>
+        <button onclick="irATarea2()">Siguiente Tarea</button>
+    </div>
+
+    <!-- Tarea 2 -->
+    <div class="contenedor pantalla-fase" id="pantalla-tarea-2" style="display: none;">
+        <div class="texto-pregunta texto-centro primera-pregunta" id="label-num-t2" style="font-size: 22px; margin-bottom: 5px;">Ronda 1 - Tarea 2 de 3</div>
+        <img id="img-tarea-2" src="" alt="Texto para contar" class="imagen-tarea">
+        <div class="texto-pregunta" id="enunciado-t2" style="margin-top: 5px; font-size: 18px; margin-bottom: 5px;"></div>
+        <input type="number" id="respuesta-tarea-2" placeholder="Ingresa la cantidad aquí">
+        <div id="error-respuesta-2" class="mensaje-error">Por favor, ingresa un número válido antes de continuar.</div>
+        <button onclick="irATarea3()">Siguiente Tarea</button>
+    </div>
+
+    <!-- Tarea 3 -->
+    <div class="contenedor pantalla-fase" id="pantalla-tarea-3" style="display: none;">
+        <div class="texto-pregunta texto-centro primera-pregunta" id="label-num-t3" style="font-size: 22px; margin-bottom: 5px;">Ronda 1 - Tarea 3 de 3</div>
+        <img id="img-tarea-3" src="" alt="Texto para contar" class="imagen-tarea">
+        <div class="texto-pregunta" id="enunciado-t3" style="margin-top: 5px; font-size: 18px; margin-bottom: 5px;"></div>
+        <input type="number" id="respuesta-tarea-3" placeholder="Ingresa la cantidad aquí">
+        <div id="error-respuesta-3" class="mensaje-error">Por favor, ingresa un número válido antes de continuar.</div>
+        <button onclick="finalizarTareasRonda()">Ver Resultados y Puntaje</button>
+    </div>
+
+    <!-- Pantalla de Resultados de la Ronda -->
+    <div class="contenedor" id="pantalla-resultado" style="display: none;">
+        <div class="texto-pregunta texto-centro primera-pregunta" id="titulo-resultado-fase" style="font-size: 26px;">Resultado de las Tareas</div>
+        <div class="caja-instrucciones" id="caja-resultado-texto" style="font-size: 20px; text-align: left;"></div>
+        <div id="contenedor-boton-siguiente"></div>
+    </div>
+
+    <!-- Pantalla de Negociación -->
+    <div class="contenedor" id="pantalla-negociacion" style="display: none;">
+        <div class="texto-pregunta texto-centro primera-pregunta" id="titulo-negociacion" style="font-size: 26px; margin-bottom: 5px;">Fase de Negociación</div>
+        <p id="info-producto-asociado" style="font-size: 16px; margin-top: 0; color: #555;"></p>
+
+        <img id="img-producto" src="" alt="Producto en negociación" class="imagen-producto">
+
+        <div class="caja-chat" id="caja-chat-negociacion">
+            <p style="margin: 0; color: #2c3e50;"><strong>Asistente Virtual (IA):</strong> ¡Hola! Estás negociando por este artículo. Haz tu primera oferta.</p>
+        </div>
+
+        <div id="seccion-input-oferta">
+            <div class="texto-pregunta" id="label-etapa-negociacion" style="font-size: 16px; margin-top: 5px; margin-bottom: 5px;">Etapa 1 de 3: Envía tu oferta</div>
+            <input type="number" id="input-oferta-usuario" placeholder="Ingresa la cantidad de puntos a ofertar">
+            <div id="error-oferta" class="mensaje-error">La oferta no puede superar tus puntos disponibles ni ser menor al mínimo permitido.</div>
+            <button onclick="enviarOfertaUsuario()">Enviar Oferta</button>
+        </div>
+
+        <div id="contenedor-boton-ronda"></div>
+    </div>
+
+    <!-- Pantalla de resumen de excedentes -->
+    <div class="contenedor" id="pantalla-resumen" style="display: none;">
+        <h1 style="font-size: 30px;">Resumen de tus resultados</h1>
+        <div class="caja-instrucciones" style="margin-bottom: 0;">
+            <ul class="lista-resumen" id="lista-resumen-excedentes">
+                <li>Cargando resultados...</li>
+            </ul>
+        </div>
+        <div class="caja-total">
+            Excedente total acumulado:
+            <span id="txt-excedente-total">0 puntos</span>
+        </div>
+        <p class="mensaje-conversion">Las entrevistadoras realizarán la conversión equivalente de los puntos que te sobraron en las negociaciones a dinero real, de acuerdo con la conversión establecida para este estudio.</p>
+        <button id="btn-continuar-resumen" onclick="finalizarEstudio()">Continuar</button>
+    </div>
+
+    <!-- Pantalla de descalificación -->
+    <div class="contenedor" id="pantalla-descalificado" style="display: none;">
+        <h1 style="font-size: 30px; color: #c0392b;">Estudio finalizado</h1>
+        <div class="caja-descalificacion">
+            <p style="margin: 0; font-size: 18px; color: #c0392b; font-weight: bold;">Has sido descalificado/a del estudio.</p>
+            <p style="margin-top: 10px; font-size: 16px; font-family: Arial, sans-serif; color: #444;">Esto ocurrió porque fallaste las 3 tareas de concentración en más de una ronda, lo que no permite continuar con el proceso de negociación de forma válida.</p>
+            <p style="margin-top: 10px; font-size: 16px; font-family: Arial, sans-serif; color: #444;">Gracias de todas formas por tu participación. Puedes cerrar esta ventana.</p>
+        </div>
+    </div>
+
+    <!-- Pantalla de cierre del estudio -->
+    <div class="contenedor" id="pantalla-final" style="display: none;">
+        <h1>¡Gracias por participar!</h1>
+        <div class="caja-instrucciones">
+            <p style="margin: 0;">Has completado las 3 rondas del estudio.</p>
+            <p style="margin-top: 10px; font-size: 18px;">Tus respuestas han sido registradas. Ya puedes cerrar esta ventana.</p>
+        </div>
+    </div>
+
+    <!-- LÓGICA DE FIREBASE Y EXPERIMENTO -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCVVdSH6NjdZqGAuoLdXTFrZ04YbkXnav0",
+            authDomain: "respuestas-experimento-tesis.firebaseapp.com",
+            projectId: "respuestas-experimento-tesis",
+            storageBucket: "respuestas-experimento-tesis.firebasestorage.app",
+            messagingSenderId: "1470479766",
+            appId: "1:1470479766:web:c41166ce1c31d01b3331b7",
+            measurementId: "G-SRRKR7JP0B"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let datosUsuario = {
+            id: "",
+            sexo: "",
+            edad: "",
+            areaEstudio: "",
+            situacion: "",
+            ingreso: "",
+            grupoInterno: 0,
+            rondaActual: 1,
+            puntosRondaActual: 0,
+            productosAsignados: [],
+            excedentes: { 1: null, 2: null, 3: null },
+            rondasSinAciertos: 0
+        };
+
+        const bancoRondas = [
+            {
+                ronda: 1,
+                t1: { pregunta: 'Cuente cuantos pares de signos de exclamación (¡!) se encuentran en el texto presente', imagen: 'unzapato.jpg', correcta: 7 },
+                t2: { pregunta: '¿Cuántas líneas de párrafo hay en el texto?', imagen: 'poema.png', correcta: 12 },
+                t3: { pregunta: '¿Cuántas comas hay en el texto?', imagen: 'lagallina.png', correcta: 15 }
+            },
+            {
+                ronda: 2,
+                t1: { pregunta: 'Cuente cuantos pares de signos de exclamación (¡!) se encuentran en el texto presente', imagen: 'r2signoe.png', correcta: 6 },
+                t2: { pregunta: '¿Cuántas líneas tiene el texto en total?', imagen: 'r2lineas.png', correcta: 12 },
+                t3: { pregunta: '¿Cuántas comas hay en el texto?', imagen: 'r2comas.png', correcta: 12 }
+            },
+            {
+                ronda: 3,
+                t1: { pregunta: 'Cuente cuantos pares de signos de exclamación (¡!) se encuentran en el texto presente', imagen: 'r3signos.jpeg', correcta: 14 },
+                t2: { pregunta: '¿Cuántas líneas de párrafo hay en el texto?', imagen: 'r3lineas.png', correcta: 10 },
+                t3: { pregunta: '¿Cuántas comas hay en el texto?', imagen: 'r3comas.png', correcta: 6 }
+            }
+        ];
+
+        const catalogoBaseProductos = [
+            { nombre: "Botella de agua",  porcentaje: 0.80, imagen: "botella.png" },
+            { nombre: "Bebida gaseosa",   porcentaje: 0.73, imagen: "gaseosa.png" },
+            { nombre: "Calcetines",       porcentaje: 0.86, imagen: "calcetines.png" },
+            { nombre: "Polera",           porcentaje: 0.93, imagen: "polera.png" },
+            { nombre: "Batería portátil", porcentaje: 0.95, imagen: "bateria.png" }
+        ];
+
+        const OFERTA_MINIMA_PORC = 0.80;
+        const UMBRAL_ACEPTACION_ETAPA_1 = 0.95;
+        const UMBRAL_ACEPTACION_ETAPA_2 = 0.90;
+        const CONCESION_ETAPA_1 = 0.40;
+        const CONCESION_ETAPA_2 = 0.50;
+
+        let productoSeleccionado = null;
+        let precioBaseProducto = 0;
+        let precioPedidoIA = 0;
+        let etapaNegociacion = 1;
+        let ultimaOfertaUsuario = 0;
+        let historialOfertas = [];
+
+        const PANTALLAS = [
+            'pantalla-ingreso', 'pantalla-preguntas-1', 'pantalla-preguntas-2', 'pantalla-instrucciones',
+            'pantalla-tarea-1', 'pantalla-tarea-2', 'pantalla-tarea-3', 'pantalla-resultado',
+            'pantalla-negociacion', 'pantalla-resumen', 'pantalla-descalificado', 'pantalla-final'
+        ];
+
+        function irAlInicio() {
+            window.scrollTo(0, 0);
+            document.querySelectorAll('.contenedor').forEach(c => c.scrollTop = 0);
+        }
+
+        function mostrarSolo(id) {
+            PANTALLAS.forEach(p => document.getElementById(p).style.display = 'none');
+            document.getElementById(id).style.display = 'block';
+            irAlInicio();
+        }
+
+        function formatearPuntos(n) {
+            return Number(n).toLocaleString('es-CL');
+        }
+
+        async function guardarRonda(datos) {
+            if (datosUsuario.id === "000" || !datosUsuario.id) return;
+            try {
+                await setDoc(
+                    doc(db, "participantes", `${datosUsuario.id}_Ronda${datosUsuario.rondaActual}`),
+                    datos,
+                    { merge: true }
+                );
+            } catch (err) {
+                console.error("Error guardando ronda:", err);
+            }
+        }
+
+        async function guardarParticipante(datos) {
+            if (datosUsuario.id === "000" || !datosUsuario.id) return;
+            try {
+                await setDoc(doc(db, "participantes", datosUsuario.id), datos, { merge: true });
+            } catch (err) {
+                console.error("Error guardando participante:", err);
+            }
+        }
+
+        function barajarArreglo(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        window.manejarEnterPuntos = function(event) {
+            if (event.key === 'Enter') {
+                const val = parseInt(event.target.value);
+                if (!isNaN(val)) {
+                    datosUsuario.puntosRondaActual = val;
+                    alert(`¡Puntos de la ronda actual actualizados a ${val}!`);
+                }
+            }
+        };
+
+        window.cambiarRondaDev = function() {
+            datosUsuario.rondaActual = datosUsuario.rondaActual >= 3 ? 1 : datosUsuario.rondaActual + 1;
+            document.getElementById('btn-dev-ronda').innerText = datosUsuario.rondaActual;
+            document.getElementById('titulo-instrucciones').innerText =
+                `Fase de Obtención de Ingresos (Ronda ${datosUsuario.rondaActual})`;
+        };
+
+        window.irAPantalla = function(idPantalla) {
+            if (idPantalla === 'pantalla-resumen') {
+                if (!datosUsuario.id) datosUsuario.id = "000";
+                mostrarResumen();
+                return;
+            }
+
+            mostrarSolo(idPantalla);
+
+            if (idPantalla.startsWith('pantalla-tarea')) {
+                if (!datosUsuario.id) datosUsuario.id = "000";
+                if (datosUsuario.grupoInterno === 0) datosUsuario.grupoInterno = 1;
+                actualizarPreguntasRondaUI();
+            }
+            if (idPantalla === 'pantalla-negociacion') {
+                if (!datosUsuario.id) datosUsuario.id = "000";
+                const v = parseInt(document.getElementById('input-dev-puntos').value);
+                if (!isNaN(v)) datosUsuario.puntosRondaActual = v;
+                iniciarFaseNegociacion();
+            }
+        };
+
+        window.alternarGrupoDev = function() {
+            const btnDev = document.getElementById('btn-dev-grupo');
+            if (!datosUsuario.id) datosUsuario.id = "000";
+
+            if (datosUsuario.grupoInterno === 1 || datosUsuario.grupoInterno === 0) {
+                datosUsuario.grupoInterno = 2;
+                btnDev.innerText = "Modo 2";
+                btnDev.style.backgroundColor = "#9b59b6";
+            } else {
+                datosUsuario.grupoInterno = 1;
+                btnDev.innerText = "Modo 1";
+                btnDev.style.backgroundColor = "#27ae60";
+            }
+        };
+
+        window.iniciarExperimento = async function() {
+            const codigo = document.getElementById('codigo-participante').value.trim();
+            document.getElementById('error-formato').style.display = 'none';
+            document.getElementById('error-duplicado').style.display = 'none';
+
+            if (codigo === "000") {
+                datosUsuario.productosAsignados = barajarArreglo(catalogoBaseProductos);
+                document.getElementById('super-menu').style.display = 'block';
+                document.getElementById('codigo-participante').value = "";
+                return;
+            }
+
+            if (!/^[0-9]{3}$/.test(codigo)) {
+                document.getElementById('error-formato').style.display = 'block';
+                return;
+            }
+
+            try {
+                const docRef = doc(db, "participantes", codigo);
+                const docSnap = await getDoc(docRef);
+                const conteoRef = doc(db, "estadisticas", "conteo");
+                let conteoSnap = await getDoc(conteoRef);
+
+                if (!conteoSnap.exists()) {
+                    await setDoc(conteoRef, { grupo1: 0, grupo2: 0 });
+                    conteoSnap = await getDoc(conteoRef);
+                }
+                const conteoData = conteoSnap.data();
+
+                if (docSnap.exists() || (conteoData.grupo1 >= 30 && conteoData.grupo2 >= 30)) {
+                    document.getElementById('error-duplicado').style.display = 'block';
+                    return;
+                }
+
+                datosUsuario.productosAsignados = barajarArreglo(catalogoBaseProductos);
+
+                await setDoc(docRef, {
+                    estado: "iniciando",
+                    productosAsignados: datosUsuario.productosAsignados.map(p => p.nombre)
+                });
+                datosUsuario.id = codigo;
+                mostrarSolo('pantalla-preguntas-1');
+
+            } catch (error) {
+                console.error("Error conectando a Firebase:", error);
+                datosUsuario.productosAsignados = barajarArreglo(catalogoBaseProductos);
+                datosUsuario.id = codigo;
+                mostrarSolo('pantalla-preguntas-1');
+            }
+        };
+
+        window.obtenerRespuestaSeleccionada = function(nombreRadio) {
+            const opciones = document.getElementsByName(nombreRadio);
+            for (let i = 0; i < opciones.length; i++) {
+                if (opciones[i].checked) return opciones[i].value;
+            }
+            return "";
+        };
+
+        window.irAPregunta5 = function() {
+            const rSexo = obtenerRespuestaSeleccionada('sexo');
+            const edadInput = document.getElementById('input-edad').value.trim();
+            const rArea = obtenerRespuestaSeleccionada('area_estudio');
+            const rSituacion = obtenerRespuestaSeleccionada('situacion');
+
+            document.getElementById('error-edad').style.display = 'none';
+            document.getElementById('error-bloque-1').style.display = 'none';
+
+            if (rSexo === "" || edadInput === "" || rArea === "" || rSituacion === "") {
+                document.getElementById('error-bloque-1').style.display = 'block';
+                return;
+            }
+
+            if (!/^[0-9]{2}$/.test(edadInput)) {
+                document.getElementById('error-edad').style.display = 'block';
+                return;
+            }
+
+            const edadNum = parseInt(edadInput);
+            if (edadNum < 18) {
+                document.getElementById('error-edad').style.display = 'block';
+                return;
+            }
+
+            datosUsuario.sexo = rSexo;
+            datosUsuario.edad = edadNum + " años";
+            datosUsuario.areaEstudio = rArea;
+            datosUsuario.situacion = rSituacion;
+
+            mostrarSolo('pantalla-preguntas-2');
+        };
+
+        window.guardarYContinuar = async function() {
+            const rIngreso = obtenerRespuestaSeleccionada('ingreso');
+            document.getElementById('error-p5').style.display = 'none';
+
+            if (rIngreso === "") {
+                document.getElementById('error-p5').style.display = 'block';
+                return;
+            }
+
+            datosUsuario.ingreso = rIngreso;
+            prepararPantallaInstrucciones();
+
+            (async () => {
+                try {
+                    const conteoRef = doc(db, "estadisticas", "conteo");
+                    const conteoSnap = await getDoc(conteoRef);
+                    let conteoData = conteoSnap.exists() ? conteoSnap.data() : { grupo1: 0, grupo2: 0 };
+
+                    if (!conteoSnap.exists()) {
+                        await setDoc(conteoRef, { grupo1: 0, grupo2: 0 });
+                    }
+
+                    let grupoAsignado = 0;
+                    if (conteoData.grupo1 >= 30) grupoAsignado = 2;
+                    else if (conteoData.grupo2 >= 30) grupoAsignado = 1;
+                    else grupoAsignado = Math.random() < 0.5 ? 1 : 2;
+
+                    datosUsuario.grupoInterno = grupoAsignado;
+
+                    await setDoc(doc(db, "participantes", `${datosUsuario.id}_Ronda1`), {
+                        idParticipante: datosUsuario.id,
+                        ronda: "Ronda 1",
+                        sexo: datosUsuario.sexo,
+                        edad: datosUsuario.edad,
+                        areaEstudio: datosUsuario.areaEstudio,
+                        situacion: datosUsuario.situacion,
+                        ingreso: datosUsuario.ingreso,
+                        grupoInterno: datosUsuario.grupoInterno,
+                        estado: "cuestionario_completado"
+                    }, { merge: true });
+
+                    const actualizacionGrupo = grupoAsignado === 1 ? { grupo1: increment(1) } : { grupo2: increment(1) };
+                    await updateDoc(conteoRef, actualizacionGrupo);
+                } catch (error) {
+                    console.error("Error en segundo plano con Firebase:", error);
+                }
+            })();
+        };
+
+        function prepararPantallaInstrucciones() {
+            document.getElementById('titulo-instrucciones').innerText =
+                `Fase de Obtención de Ingresos (Ronda ${datosUsuario.rondaActual})`;
+            mostrarSolo('pantalla-instrucciones');
+        }
+
+        window.comenzarTareas = function() {
+            actualizarPreguntasRondaUI();
+            ['respuesta-tarea-1', 'respuesta-tarea-2', 'respuesta-tarea-3']
+                .forEach(id => document.getElementById(id).value = "");
+            mostrarSolo('pantalla-tarea-1');
+
+            const datosRonda = {
+                idParticipante: datosUsuario.id,
+                ronda: `Ronda ${datosUsuario.rondaActual}`,
+                sexo: datosUsuario.sexo,
+                edad: datosUsuario.edad,
+                areaEstudio: datosUsuario.areaEstudio,
+                situacion: datosUsuario.situacion,
+                ingreso: datosUsuario.ingreso,
+                estado: "tareas_en_curso"
+            };
+            if (datosUsuario.grupoInterno !== 0) datosRonda.grupoInterno = datosUsuario.grupoInterno;
+            guardarRonda(datosRonda);
+        };
+
+        function actualizarPreguntasRondaUI() {
+            const rondaConfig = bancoRondas[datosUsuario.rondaActual - 1];
+
+            document.getElementById('label-num-t1').innerText = `Ronda ${datosUsuario.rondaActual} - Tarea 1 de 3`;
+            document.getElementById('enunciado-t1').innerText = rondaConfig.t1.pregunta;
+            document.getElementById('img-tarea-1').src = rondaConfig.t1.imagen;
+
+            document.getElementById('label-num-t2').innerText = `Ronda ${datosUsuario.rondaActual} - Tarea 2 de 3`;
+            document.getElementById('enunciado-t2').innerText = rondaConfig.t2.pregunta;
+            document.getElementById('img-tarea-2').src = rondaConfig.t2.imagen;
+
+            document.getElementById('label-num-t3').innerText = `Ronda ${datosUsuario.rondaActual} - Tarea 3 de 3`;
+            document.getElementById('enunciado-t3').innerText = rondaConfig.t3.pregunta;
+            document.getElementById('img-tarea-3').src = rondaConfig.t3.imagen;
+        }
+
+        window.irATarea2 = function() {
+            const resp1 = document.getElementById('respuesta-tarea-1').value.trim();
+            const err1 = document.getElementById('error-respuesta-1');
+            err1.style.display = 'none';
+
+            if (resp1 === "") {
+                err1.style.display = 'block';
+                return;
+            }
+            mostrarSolo('pantalla-tarea-2');
+        };
+
+        window.irATarea3 = function() {
+            const resp2 = document.getElementById('respuesta-tarea-2').value.trim();
+            const err2 = document.getElementById('error-respuesta-2');
+            err2.style.display = 'none';
+
+            if (isNaN(parseInt(resp2))) {
+                err2.style.display = 'block';
+                return;
+            }
+            mostrarSolo('pantalla-tarea-3');
+        };
+
+        window.finalizarTareasRonda = function() {
+            const resp3 = document.getElementById('respuesta-tarea-3').value.trim();
+            const err3 = document.getElementById('error-respuesta-3');
+            err3.style.display = 'none';
+
+            if (resp3 === "") {
+                err3.style.display = 'block';
+                return;
+            }
+
+            const rondaConfig = bancoRondas[datosUsuario.rondaActual - 1];
+            const r1 = parseInt(document.getElementById('respuesta-tarea-1').value.trim());
+            const r2 = parseInt(document.getElementById('respuesta-tarea-2').value.trim());
+            const r3 = parseInt(resp3);
+
+            let buenas = 0;
+            if (r1 === rondaConfig.t1.correcta) buenas++;
+            if (r2 === rondaConfig.t2.correcta) buenas++;
+            if (r3 === rondaConfig.t3.correcta) buenas++;
+
+            const puntosObtenidosRonda = 1000 + (buenas * 1000);
+            datosUsuario.puntosRondaActual = puntosObtenidosRonda;
+
+            mostrarSolo('pantalla-resultado');
+
+            let mensajeSiguientePaso = "";
+            let botonSiguiente = "";
+            let esSegundaVezSinAciertos = false;
+
+            if (buenas === 0) {
+                datosUsuario.rondasSinAciertos++;
+
+                if (datosUsuario.rondasSinAciertos >= 2) {
+                    esSegundaVezSinAciertos = true;
+                    mensajeSiguientePaso = `
+                        <div class="caja-advertencia" style="background-color:#fdecea; border-color:#c0392b;">
+                            <p style="margin:0; font-weight:bold; color:#c0392b;">Has fallado nuevamente las 3 tareas de esta ronda.</p>
+                            <p style="margin-top:8px; font-size:15px; font-family: Arial, sans-serif; color:#444;">Por política del estudio, esto significa que quedas descalificado/a de la participación.</p>
+                        </div>`;
+                    botonSiguiente = `<button onclick="descalificarParticipante()">Continuar</button>`;
+                } else {
+                    mensajeSiguientePaso = `
+                        <div class="caja-advertencia">
+                            <p style="margin:0; font-weight:bold; color:#b9770e;">No acertaste ninguna respuesta.</p>
+                            <p style="margin-top:8px; font-size:15px; font-family: Arial, sans-serif; color:#444;">En esta ronda no podrás negociar un producto. <strong>Advertencia:</strong> necesitas al menos una respuesta correcta por ronda. Si vuelves a fallar las 3 tareas en otra ronda, serás descalificado/a del estudio.</p>
+                        </div>`;
+                    botonSiguiente = `<button onclick="saltarNegociacion()">Continuar</button>`;
+                }
+            } else {
+                botonSiguiente = `<button onclick="iniciarFaseNegociacion()">Continuar a la fase de negociación</button>`;
+            }
+
+            document.getElementById('caja-resultado-texto').innerHTML = `
+                <p style="margin: 0; color: #27ae60; font-weight: bold;">¡Ronda ${datosUsuario.rondaActual} completada con éxito!</p>
+                <p style="margin-top: 10px; font-size: 18px;">Respuestas correctas: <strong>${buenas} / 3</strong></p>
+                <p style="margin-top: 10px; font-size: 18px;">Puntaje obtenido en esta ronda: <strong>${puntosObtenidosRonda} puntos</strong> (1.000 base + ${buenas * 1000} por aciertos).</p>
+                ${mensajeSiguientePaso}
+            `;
+
+            document.getElementById('input-dev-puntos').value = puntosObtenidosRonda;
+            document.getElementById('contenedor-boton-siguiente').innerHTML = botonSiguiente;
+
+            guardarRonda({
+                respuestasTareas: { tarea1: r1, tarea2: r2, tarea3: r3 },
+                respuestasBuenas: buenas,
+                puntosObtenidos: puntosObtenidosRonda,
+                estado: esSegundaVezSinAciertos ? "descalificado_0_aciertos" : "tareas_completadas",
+                timestamp: new Date().toISOString()
+            });
+        };
+
+        window.saltarNegociacion = function() {
+            const rondaNum = datosUsuario.rondaActual;
+            const excedente = datosUsuario.puntosRondaActual;
+
+            datosUsuario.excedentes[rondaNum] = excedente;
+
+            guardarRonda({ excedente: excedente, estado: "sin_negociacion_0_aciertos" });
+            guardarParticipante({ excedentes: { [`ronda${rondaNum}`]: excedente } });
+
+            if (rondaNum < 3) {
+                reiniciarProcesoNuevaRonda(rondaNum + 1);
+            } else {
+                mostrarResumen();
+            }
+        };
+
+        window.descalificarParticipante = async function() {
+            await guardarParticipante({
+                estado: "descalificado",
+                motivoDescalificacion: "0 aciertos en más de una ronda (sin negociación posible)",
+                rondaDescalificacion: datosUsuario.rondaActual,
+                finalizadoEn: new Date().toISOString()
+            });
+            mostrarSolo('pantalla-descalificado');
+        };
+
+        window.iniciarFaseNegociacion = function() {
+            mostrarSolo('pantalla-negociacion');
+
+            etapaNegociacion = 1;
+            historialOfertas = [];
+            ultimaOfertaUsuario = 0;
+            document.getElementById('contenedor-boton-ronda').innerHTML = "";
+
+            if (!datosUsuario.productosAsignados || datosUsuario.productosAsignados.length === 0) {
+                datosUsuario.productosAsignados = barajarArreglo(catalogoBaseProductos);
+            }
+
+            const indiceProductoRonda = datosUsuario.rondaActual - 1;
+            productoSeleccionado = datosUsuario.productosAsignados[indiceProductoRonda];
+
+            precioBaseProducto = Math.round(datosUsuario.puntosRondaActual * productoSeleccionado.porcentaje);
+            precioPedidoIA = Math.min(precioBaseProducto, datosUsuario.puntosRondaActual);
+
+            document.getElementById('titulo-negociacion').innerText = `Fase de Negociación (Ronda ${datosUsuario.rondaActual})`;
+            document.getElementById('info-producto-asociado').innerText =
+                `Producto asignado: ${productoSeleccionado.nombre} (Valor de referencia: ${precioBaseProducto} puntos)`;
+
+            const imgProducto = document.getElementById('img-producto');
+            imgProducto.style.display = 'block';
+            imgProducto.onerror = function() { this.style.display = 'none'; };
+            imgProducto.alt = productoSeleccionado.nombre;
+            imgProducto.src = productoSeleccionado.imagen;
+
+            document.getElementById('caja-chat-negociacion').innerHTML =
+                `<p style="margin: 0; color: #2c3e50;"><strong>Asistente Virtual (IA):</strong> ¡Hola! Estás negociando por el artículo <strong>${productoSeleccionado.nombre}</strong>. Tienes <strong>${datosUsuario.puntosRondaActual} puntos</strong> ganados en esta ronda. Haz tu primera oferta.</p>`;
+
+            document.getElementById('label-etapa-negociacion').innerText = "Etapa 1 de 3: Envía tu oferta";
+            document.getElementById('input-oferta-usuario').value = "";
+            document.getElementById('error-oferta').style.display = 'none';
+            document.getElementById('seccion-input-oferta').style.display = 'block';
+        };
+
+        window.enviarOfertaUsuario = function() {
+            const inputOferta = document.getElementById('input-oferta-usuario');
+            const errorOferta = document.getElementById('error-oferta');
+            errorOferta.style.display = 'none';
+
+            const presupuesto = datosUsuario.puntosRondaActual;
+            const ofertaVal = parseInt(inputOferta.value.trim());
+            const minPermitido = Math.round(precioBaseProducto * OFERTA_MINIMA_PORC);
+
+            if (isNaN(ofertaVal) || ofertaVal <= 0 || ofertaVal > presupuesto) {
+                errorOferta.innerText = `La oferta no puede superar tus ${presupuesto} puntos disponibles de esta ronda.`;
+                errorOferta.style.display = 'block';
+                return;
+            }
+
+            if (ofertaVal < minPermitido) {
+                errorOferta.innerText = `Tu oferta es demasiado baja. No puede ser menor al 20% inferior del precio base (${minPermitido} pts).`;
+                errorOferta.style.display = 'block';
+                return;
+            }
+
+            if (etapaNegociacion === 3 && ofertaVal <= ultimaOfertaUsuario) {
+                errorOferta.innerText = `En la Etapa 3, tu oferta debe ser estrictamente mayor a tu oferta anterior (${ultimaOfertaUsuario} pts).`;
+                errorOferta.style.display = 'block';
+                return;
+            }
+
+            const registro = { etapa: etapaNegociacion, oferta: ofertaVal, contraofertaIA: null };
+            historialOfertas.push(registro);
+            ultimaOfertaUsuario = ofertaVal;
+
+            const cajaChat = document.getElementById('caja-chat-negociacion');
+            cajaChat.innerHTML += `<p style="margin: 8px 0 0 0; color: #16a085;"><strong>Tú:</strong> Oferté ${ofertaVal} puntos.</p>`;
+            inputOferta.value = "";
+
+            let acuerdo = false;
+
+            if (etapaNegociacion === 3) {
+                acuerdo = true;
+                cajaChat.innerHTML += `<p style="margin: 8px 0 0 0; color: #27ae60;"><strong>Asistente Virtual (IA):</strong> Acepto tu oferta final de ${ofertaVal} puntos. ¡Acuerdo cerrado!</p>`;
+            } else {
+                const porcUmbral = etapaNegociacion === 1 ? UMBRAL_ACEPTACION_ETAPA_1 : UMBRAL_ACEPTACION_ETAPA_2;
+                const umbralAceptacion = Math.round(precioBaseProducto * porcUmbral);
+
+                if (ofertaVal >= umbralAceptacion || ofertaVal >= precioPedidoIA - 1) {
+                    acuerdo = true;
+                    cajaChat.innerHTML += `<p style="margin: 8px 0 0 0; color: #27ae60;"><strong>Asistente Virtual (IA):</strong> ¡Trato hecho! Acepto tu oferta de ${ofertaVal} puntos por el/la ${productoSeleccionado.nombre}.</p>`;
+                } else {
+                    const concesion = etapaNegociacion === 1 ? CONCESION_ETAPA_1 : CONCESION_ETAPA_2;
+                    let contraofertaIA = Math.round(precioPedidoIA - concesion * (precioPedidoIA - ofertaVal));
+
+                    contraofertaIA = Math.max(contraofertaIA, ofertaVal + 1);
+                    contraofertaIA = Math.min(contraofertaIA, precioPedidoIA - 1);
+                    contraofertaIA = Math.min(contraofertaIA, presupuesto);
+
+                    precioPedidoIA = contraofertaIA;
+                    registro.contraofertaIA = contraofertaIA;
+
+                    etapaNegociacion++;
+                    if (etapaNegociacion === 2) {
+                        cajaChat.innerHTML += `<p style="margin: 8px 0 0 0; color: #c0392b;"><strong>Asistente Virtual (IA):</strong> Tu oferta es baja, pero podemos acercarnos. Mi contraoferta es de <strong>${contraofertaIA} puntos</strong>. Entramos a la <strong>Etapa 2</strong>.</p>`;
+                        document.getElementById('label-etapa-negociacion').innerText = "Etapa 2 de 3: Envía tu nueva oferta";
+                    } else if (etapaNegociacion === 3) {
+                        cajaChat.innerHTML += `<p style="margin: 8px 0 0 0; color: #c0392b;"><strong>Asistente Virtual (IA):</strong> Última oportunidad. Mi contraoferta es <strong>${contraofertaIA} puntos</strong>. Envía tu oferta final en la <strong>Etapa 3</strong> (debe ser mayor a la anterior).</p>`;
+                        document.getElementById('label-etapa-negociacion').innerText = "Etapa 3 de 3: Oferta final (Debe ser mayor a la anterior)";
+                    }
+                }
+            }
+            cajaChat.scrollTop = cajaChat.scrollHeight;
+
+            guardarRonda({
+                negociacion: {
+                    producto: productoSeleccionado.nombre,
+                    precioBase: precioBaseProducto,
+                    presupuesto: presupuesto,
+                    historialOfertas: historialOfertas,
+                    puntosAcordados: ofertaVal,
+                    estado: acuerdo ? "acuerdo_exitoso" : "en_proceso"
+                }
+            });
+
+            if (acuerdo) finalizarNegociacionConExito(ofertaVal);
+        };
+
+        function finalizarNegociacionConExito(puntosAcordados) {
+            document.getElementById('seccion-input-oferta').style.display = 'none';
+            const cajaChat = document.getElementById('caja-chat-negociacion');
+            const rondaNum = datosUsuario.rondaActual;
+            const excedente = datosUsuario.puntosRondaActual - puntosAcordados;
+
+            cajaChat.innerHTML += `<p style="margin: 8px 0 0 0; color: #2980b9;"><strong>Resumen:</strong> Gastaste ${puntosAcordados} puntos en el producto y te sobraron <strong>${excedente} puntos</strong> de excedente en esta ronda.</p>`;
+            cajaChat.scrollTop = cajaChat.scrollHeight;
+
+            datosUsuario.excedentes[rondaNum] = excedente;
+
+            guardarRonda({ excedente: excedente, estado: "ronda_completada" });
+            guardarParticipante({ excedentes: { [`ronda${rondaNum}`]: excedente } });
+
+            const cont = document.getElementById('contenedor-boton-ronda');
+            if (rondaNum < 3) {
+                const sig = rondaNum + 1;
+                cont.innerHTML = `<button onclick="reiniciarProcesoNuevaRonda(${sig})">Avanzar a la Ronda ${sig}</button>`;
+            } else {
+                cont.innerHTML = `<button onclick="mostrarResumen()">Ver resumen de resultados</button>`;
+            }
+        }
+
+        window.reiniciarProcesoNuevaRonda = function(nuevaRonda) {
+            datosUsuario.rondaActual = nuevaRonda;
+            datosUsuario.puntosRondaActual = 0;
+            etapaNegociacion = 1;
+            historialOfertas = [];
+            ultimaOfertaUsuario = 0;
+            precioPedidoIA = 0;
+            productoSeleccionado = null;
+            document.getElementById('contenedor-boton-ronda').innerHTML = "";
+
+            document.querySelectorAll('#pantalla-tarea-1 input, #pantalla-tarea-2 input, #pantalla-tarea-3 input')
+                .forEach(i => i.value = '');
+
+            const btnRonda = document.getElementById('btn-dev-ronda');
+            if (btnRonda) btnRonda.innerText = nuevaRonda;
+
+            prepararPantallaInstrucciones();
+        };
+
+        async function obtenerExcedentes() {
+            const resultado = {
+                1: datosUsuario.excedentes[1],
+                2: datosUsuario.excedentes[2],
+                3: datosUsuario.excedentes[3]
+            };
+
+            if (datosUsuario.id && datosUsuario.id !== "000") {
+                for (let r = 1; r <= 3; r++) {
+                    try {
+                        const snap = await getDoc(doc(db, "participantes", `${datosUsuario.id}_Ronda${r}`));
+                        if (snap.exists() && typeof snap.data().excedente === "number") {
+                            resultado[r] = snap.data().excedente;
+                        }
+                    } catch (err) {
+                        console.error(`Error leyendo excedente de la Ronda ${r}:`, err);
+                    }
+                }
+            }
+            return resultado;
+        }
+
+        window.mostrarResumen = async function() {
+            mostrarSolo('pantalla-resumen');
+
+            const lista = document.getElementById('lista-resumen-excedentes');
+            const txtTotal = document.getElementById('txt-excedente-total');
+            const btnContinuar = document.getElementById('btn-continuar-resumen');
+
+            lista.innerHTML = "<li>Cargando resultados...</li>";
+            txtTotal.innerText = "...";
+            btnContinuar.disabled = true;
+
+            const excedentes = await obtenerExcedentes();
+
+            let total = 0;
+            let html = "";
+            for (let r = 1; r <= 3; r++) {
+                const valor = excedentes[r];
+                if (typeof valor === "number") total += valor;
+                const texto = typeof valor === "number" ? `${formatearPuntos(valor)} puntos` : "—";
+                html += `<li>Ronda ${r} - Negociación ${r}: Excedente obtenido: <strong>${texto}</strong></li>`;
+            }
+
+            lista.innerHTML = html;
+            txtTotal.innerText = `${formatearPuntos(total)} puntos`;
+            btnContinuar.disabled = false;
+
+            guardarParticipante({
+                excedentes: {
+                    ronda1: excedentes[1],
+                    ronda2: excedentes[2],
+                    ronda3: excedentes[3]
+                },
+                excedenteTotal: total
+            });
+        };
+
+        window.finalizarEstudio = async function() {
+            await guardarParticipante({
+                estado: "estudio_completado",
+                finalizadoEn: new Date().toISOString()
+            });
+            mostrarSolo('pantalla-final');
+        };
+    </script>
+</body>
+</html>
