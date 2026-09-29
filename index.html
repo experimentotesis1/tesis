@@ -722,16 +722,8 @@
             try {
                 const docRef = doc(db, "participantes", codigo);
                 const docSnap = await getDoc(docRef);
-                const conteoRef = doc(db, "estadisticas", "conteo");
-                let conteoSnap = await getDoc(conteoRef);
 
-                if (!conteoSnap.exists()) {
-                    await setDoc(conteoRef, { grupo1: 0, grupo2: 0 });
-                    conteoSnap = await getDoc(conteoRef);
-                }
-                const conteoData = conteoSnap.data();
-
-                if (docSnap.exists() || (conteoData.grupo1 >= 30 && conteoData.grupo2 >= 30)) {
+                if (docSnap.exists()) {
                     document.getElementById('error-duplicado').style.display = 'block';
                     return;
                 }
@@ -814,15 +806,16 @@
             (async () => {
                 try {
                     const conteoRef = doc(db, "estadisticas", "conteo");
-                    const conteoSnap = await getDoc(conteoRef);
-                    let conteoData = conteoSnap.exists() ? conteoSnap.data() : { grupo1: 0, grupo2: 0 };
+                    let conteoSnap = await getDoc(conteoRef);
 
                     if (!conteoSnap.exists()) {
-                        await setDoc(conteoRef, { grupo1: 0, grupo2: 0 });
+                        await setDoc(conteoRef, { grupo1: 0, grupo2: 0, registradoRonda1: false });
+                        conteoSnap = await getDoc(conteoRef);
                     }
 
                     let grupoAsignado = datosUsuario.grupoInterno;
-                    if (datosUsuario.rondaActual === 1 && datosUsuario.grupoInterno === 1 && !conteoSnap.data().registradoRonda1) {
+                    if (datosUsuario.rondaActual === 1 && !conteoSnap.data().registradoRonda1) {
+                        const conteoData = conteoSnap.data();
                         if (conteoData.grupo1 >= 30) grupoAsignado = 2;
                         else if (conteoData.grupo2 >= 30) grupoAsignado = 1;
                         else grupoAsignado = Math.random() < 0.5 ? 1 : 2;
@@ -972,7 +965,6 @@
 
             document.getElementById('input-dev-puntos').value = puntosObtenidosRonda;
 
-            // Paso por la Pantalla 8 (Resultados)
             mostrarSolo('pantalla-resultado');
             let mensajeSiguientePaso = "";
             let botonSiguiente = "";
@@ -1222,7 +1214,6 @@
             }
         }
 
-        // REINICIO DIRECTO A PANTALLA 2 (PREGUNTAS) AL TERMINAR RONDA, SIN PASAR POR INSTRUCCIONES GENERALES
         window.reiniciarProcesoNuevaRonda = function(nuevaRonda) {
             datosUsuario.rondaActual = nuevaRonda;
             datosUsuario.puntosRondaActual = 0;
