@@ -14,6 +14,7 @@
             align-items: center;
             height: 100vh;
             margin: 0;
+            overflow: hidden;
         }
         .contenedor {
             background-color: #dae7e9;
@@ -25,6 +26,8 @@
             max-width: 600px;
             max-height: 90vh;
             overflow-y: auto;
+            position: relative;
+            z-index: 10;
         }
         h1 {
             font-family: 'Sorts Mill Goudy', serif;
@@ -112,6 +115,7 @@
             border-radius: 8px;
             padding: 20px;
             margin: 20px 0;
+            text-align: left;
         }
         .caja-advertencia {
             background-color: #fff8e1;
@@ -261,6 +265,22 @@
             border-radius: 3px;
             border: 1px solid white;
         }
+
+        /* Confeti animado */
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 20px;
+            background: #f39c12;
+            top: 0;
+            opacity: 0.8;
+            animation: fall 3s linear infinite;
+            z-index: 5;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -275,7 +295,8 @@
         <button onclick="irAPantalla('pantalla-tarea-1')">T1</button>
         <button onclick="irAPantalla('pantalla-tarea-2')">T2</button>
         <button onclick="irAPantalla('pantalla-tarea-3')">T3</button>
-        <button onclick="irAPantalla('pantalla-resultado')">Result.</button>
+        <button onclick="irAPantalla('pantalla-resultado')">Result. (P8)</button>
+        <button onclick="irAPantalla('pantalla-bonificacion-sorpresa')">Sorpresa</button>
         <button onclick="irAPantalla('pantalla-negociacion')">Negoc.</button>
         <button onclick="irAPantalla('pantalla-resumen')">Resumen</button>
         <button onclick="irAPantalla('pantalla-descalificado')">Descalif.</button>
@@ -287,6 +308,9 @@
         <strong style="margin-left: 3px;">|</strong>
         <button id="btn-dev-grupo" onclick="alternarGrupoDev()">Modo 1</button>
     </div>
+
+    <!-- Contenedor para efectos de confeti -->
+    <div id="confetti-container"></div>
 
     <!-- Pantalla de Ingreso -->
     <div class="contenedor" id="pantalla-ingreso">
@@ -300,7 +324,10 @@
 
     <!-- Primera Pantalla: Preguntas 1, 2, 3 y 4 juntas -->
     <div class="contenedor" id="pantalla-preguntas-1" style="display: none;">
-        <div class="texto-pregunta primera-pregunta">Pregunta 1:<br>¿Con qué sexo te identificas?</div>
+        <h1 id="titulo-ronda-preguntas" style="font-size: 32px; margin-bottom: 5px;">RONDA 1</h1>
+        <p style="font-family: Arial, sans-serif; font-size: 16px; margin-top: 0; margin-bottom: 25px; color: #555;">Antes de comenzar las actividades de esta ronda, responde las siguientes preguntas:</p>
+
+        <div class="texto-pregunta primera-pregunta">Pregunta 1:<br>¿Cuál es tu sexo?</div>
         <div class="opciones">
             <div class="opcion-item"><label><input type="radio" name="sexo" value="Femenino"> Femenino</label></div>
             <div class="opcion-item"><label><input type="radio" name="sexo" value="Masculino"> Masculino</label></div>
@@ -328,7 +355,7 @@
             <div class="opcion-item"><label><input type="radio" name="situacion" value="Solo estudiante: mesada o apoyo familiar/terceros"> Solo estudiante: recibo mesada o apoyo económico familiar/de terceros.</label></div>
             <div class="opcion-item"><label><input type="radio" name="situacion" value="Solo estudiante: ahorros o becas"> Solo estudiante: me financio con ahorros o becas.</label></div>
             <div class="opcion-item"><label><input type="radio" name="situacion" value="Estudiante con ingresos propios: trabajo o trabajos ocasionales"> Estudiante con ingresos propios: trabajo o realizo trabajos ocasionales.</label></div>
-            <div class="opcion-item"><label><input type="radio" name="situacion" value="Estudiante: recibo manutención/mesada y además trabalho por mi cuenta"> Estudiante: recibo manutención/mesada y además trabajo por mi cuenta.</label></div>
+            <div class="opcion-item"><label><input type="radio" name="situacion" value="Estudiante: recibo manutención/mesada y además trabajo por mi cuenta"> Estudiante: recibo manutención/mesada y además trabajo por mi cuenta.</label></div>
         </div>
 
         <div id="error-bloque-1" class="mensaje-error">Por favor, responde todas las preguntas obligatorias antes de continuar.</div>
@@ -355,12 +382,19 @@
 
     <!-- Pantalla de Instrucciones -->
     <div class="contenedor" id="pantalla-instrucciones" style="display: none;">
-        <div class="texto-pregunta texto-centro primera-pregunta" id="titulo-instrucciones">Fase de Obtención de Ingresos (Ronda 1)</div>
-        <p id="subtitulo-instrucciones">A continuación, realizarás 3 tareas de concentración contando elementos específicos en los textos que se te presentarán.</p>
+        <div class="texto-pregunta texto-centro primera-pregunta" id="titulo-instrucciones" style="font-size: 30px;">Fase de Obtención de Ingresos</div>
+        <p id="subtitulo-instrucciones" style="font-size: 17px; text-align: left; margin-bottom: 20px;">A continuación, realizarás 3 tareas de concentración, en las que deberás contar elementos específicos presentes en los textos que se te mostrarán.</p>
+        
         <div class="caja-instrucciones">
-            <p style="margin: 0; text-align: left;"><strong>Instrucciones:</strong></p>
-            <p style="margin-top: 10px; font-size: 20px; text-align: left;">Responde con atención cada una de las 3 tareas. Al finalizar, el sistema evaluará tus aciertos para determinar tu puntaje total acumulado.</p>
+            <p style="margin: 0; font-size: 18px; color: #2c3e50; font-weight: bold;">Estructura de esta etapa:</p>
+            <p style="margin: 8px 0; font-size: 16px; font-family: Arial, sans-serif;">1. <strong>TAREAS DE CONCENTRACIÓN</strong><br>Realizarás 3 tareas de concentración. Tu desempeño y las respuestas entregadas determinarán el puntaje obtenido.</p>
+            <p style="margin: 8px 0; font-size: 16px; font-family: Arial, sans-serif;">2. <strong>NEGOCIACIÓN</strong><br>Al finalizar las 3 tareas, participarás en una negociación. Recibirás las instrucciones correspondientes antes de comenzar esta etapa.</p>
+            <p style="margin: 8px 0; font-size: 16px; font-family: Arial, sans-serif;">3. <strong>COMPENSACIÓN</strong><br>Tus resultados serán convertidos en dinero real. Considera que tus respuestas, esfuerzo y desempeño durante las actividades serán considerados para determinar tu compensación final.</p>
+            <p style="margin: 12px 0 4px 0; font-size: 16px; font-family: Arial, sans-serif; color: #27ae60; font-weight: bold; text-align: center;">Podrás recibir entre $1.000 y $5.000 pesos.</p>
+            <p style="margin: 4px 0 0 0; font-size: 13px; font-family: Arial, sans-serif; color: #555; text-align: center;">La conversión de puntos a dinero será realizada por el equipo de investigación al finalizar todas las etapas del estudio.</p>
         </div>
+
+        <p style="font-size: 15px; text-align: center; color: #444; margin: 10px 0;">Secuencia: Tareas de concentración → Negociación → Compensación</p>
         <button onclick="comenzarTareas()">Entendido, comenzar tareas</button>
     </div>
 
@@ -394,16 +428,25 @@
         <button onclick="finalizarTareasRonda()">Ver Resultados y Puntaje</button>
     </div>
 
-    <!-- Pantalla de Resultados de la Ronda -->
+    <!-- Pantalla 8: Resultados de las Tareas -->
     <div class="contenedor" id="pantalla-resultado" style="display: none;">
-        <div class="texto-pregunta texto-centro primera-pregunta" id="titulo-resultado-fase" style="font-size: 26px;">Resultado de las Tareas</div>
+        <div class="texto-pregunta texto-centro primeira-pregunta" style="font-size: 26px;">Resultado de las Tareas</div>
         <div class="caja-instrucciones" id="caja-resultado-texto" style="font-size: 20px; text-align: left;"></div>
         <div id="contenedor-boton-siguiente"></div>
     </div>
 
+    <!-- Pantalla de Bonificación Sorpresa (Exclusivo Modo 2) -->
+    <div class="contenedor" id="pantalla-bonificacion-sorpresa" style="display: none;">
+        <div class="texto-pregunta texto-centro primeira-pregunta" id="titulo-bonificacion" style="font-size: 28px; color: #27ae60;">¡Bonificación Sorpresa!</div>
+        <div class="caja-instrucciones" id="caja-bonificacion-texto" style="font-size: 19px; text-align: left;">
+            <!-- Contenido dinámico según los aciertos -->
+        </div>
+        <button onclick="continuarDesdeBonificacion()">Continuar a la fase de negociación</button>
+    </div>
+
     <!-- Pantalla de Negociación -->
     <div class="contenedor" id="pantalla-negociacion" style="display: none;">
-        <div class="texto-pregunta texto-centro primera-pregunta" id="titulo-negociacion" style="font-size: 26px; margin-bottom: 5px;">Fase de Negociación</div>
+        <div class="texto-pregunta texto-centro primeira-pregunta" id="titulo-negociacion" style="font-size: 26px; margin-bottom: 5px;">Fase de Negociación</div>
         <p id="info-producto-asociado" style="font-size: 16px; margin-top: 0; color: #555;"></p>
 
         <img id="img-producto" src="" alt="Producto en negociación" class="imagen-producto">
@@ -482,12 +525,13 @@
             areaEstudio: "",
             situacion: "",
             ingreso: "",
-            grupoInterno: 0,
+            grupoInterno: 1, // Por defecto Grupo 1 (Modo 1)
             rondaActual: 1,
             puntosRondaActual: 0,
             productosAsignados: [],
             excedentes: { 1: null, 2: null, 3: null },
-            rondasSinAciertos: 0
+            rondasSinAciertos: 0,
+            buenasUltimaRonda: 0
         };
 
         const bancoRondas = [
@@ -535,7 +579,7 @@
         const PANTALLAS = [
             'pantalla-ingreso', 'pantalla-preguntas-1', 'pantalla-preguntas-2', 'pantalla-instrucciones',
             'pantalla-tarea-1', 'pantalla-tarea-2', 'pantalla-tarea-3', 'pantalla-resultado',
-            'pantalla-negociacion', 'pantalla-resumen', 'pantalla-descalificado', 'pantalla-final'
+            'pantalla-bonificacion-sorpresa', 'pantalla-negociacion', 'pantalla-resumen', 'pantalla-descalificado', 'pantalla-final'
         ];
 
         function irAlInicio() {
@@ -546,11 +590,30 @@
         function mostrarSolo(id) {
             PANTALLAS.forEach(p => document.getElementById(p).style.display = 'none');
             document.getElementById(id).style.display = 'block';
+            limpiarConfeti();
             irAlInicio();
         }
 
         function formatearPuntos(n) {
             return Number(n).toLocaleString('es-CL');
+        }
+
+        function dispararConfetti() {
+            const container = document.getElementById('confetti-container');
+            container.innerHTML = "";
+            for (let i = 0; i < 50; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.left = Math.random() * 100 + 'vw';
+                piece.style.backgroundColor = ['#f39c12', '#e74c3c', '#27ae60', '#3498db', '#9b59b6'][Math.floor(Math.random() * 5)];
+                piece.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+                piece.style.animationDelay = (Math.random() * 1) + 's';
+                container.appendChild(piece);
+            }
+        }
+
+        function limpiarConfeti() {
+            document.getElementById('confetti-container').innerHTML = "";
         }
 
         async function guardarRonda(datos) {
@@ -597,8 +660,6 @@
         window.cambiarRondaDev = function() {
             datosUsuario.rondaActual = datosUsuario.rondaActual >= 3 ? 1 : datosUsuario.rondaActual + 1;
             document.getElementById('btn-dev-ronda').innerText = datosUsuario.rondaActual;
-            document.getElementById('titulo-instrucciones').innerText =
-                `Fase de Obtención de Ingresos (Ronda ${datosUsuario.rondaActual})`;
         };
 
         window.irAPantalla = function(idPantalla) {
@@ -612,8 +673,11 @@
 
             if (idPantalla.startsWith('pantalla-tarea')) {
                 if (!datosUsuario.id) datosUsuario.id = "000";
-                if (datosUsuario.grupoInterno === 0) datosUsuario.grupoInterno = 1;
                 actualizarPreguntasRondaUI();
+            }
+            if (idPantalla === 'pantalla-bonificacion-sorpresa') {
+                if (!datosUsuario.id) datosUsuario.id = "000";
+                mostrarPantallaSorpresa(1);
             }
             if (idPantalla === 'pantalla-negociacion') {
                 if (!datosUsuario.id) datosUsuario.id = "000";
@@ -627,7 +691,7 @@
             const btnDev = document.getElementById('btn-dev-grupo');
             if (!datosUsuario.id) datosUsuario.id = "000";
 
-            if (datosUsuario.grupoInterno === 1 || datosUsuario.grupoInterno === 0) {
+            if (datosUsuario.grupoInterno === 1) {
                 datosUsuario.grupoInterno = 2;
                 btnDev.innerText = "Modo 2";
                 btnDev.style.backgroundColor = "#9b59b6";
@@ -679,15 +743,20 @@
                     productosAsignados: datosUsuario.productosAsignados.map(p => p.nombre)
                 });
                 datosUsuario.id = codigo;
-                mostrarSolo('pantalla-preguntas-1');
+                prepararPantallaPreguntas();
 
             } catch (error) {
                 console.error("Error conectando a Firebase:", error);
                 datosUsuario.productosAsignados = barajarArreglo(catalogoBaseProductos);
                 datosUsuario.id = codigo;
-                mostrarSolo('pantalla-preguntas-1');
+                prepararPantallaPreguntas();
             }
         };
+
+        function prepararPantallaPreguntas() {
+            document.getElementById('titulo-ronda-preguntas').innerText = `RONDA ${datosUsuario.rondaActual}`;
+            mostrarSolo('pantalla-preguntas-1');
+        }
 
         window.obtenerRespuestaSeleccionada = function(nombreRadio) {
             const opciones = document.getElementsByName(nombreRadio);
@@ -752,16 +821,20 @@
                         await setDoc(conteoRef, { grupo1: 0, grupo2: 0 });
                     }
 
-                    let grupoAsignado = 0;
-                    if (conteoData.grupo1 >= 30) grupoAsignado = 2;
-                    else if (conteoData.grupo2 >= 30) grupoAsignado = 1;
-                    else grupoAsignado = Math.random() < 0.5 ? 1 : 2;
+                    let grupoAsignado = datosUsuario.grupoInterno;
+                    if (datosUsuario.rondaActual === 1 && datosUsuario.grupoInterno === 1 && !conteoSnap.data().registradoRonda1) {
+                        if (conteoData.grupo1 >= 30) grupoAsignado = 2;
+                        else if (conteoData.grupo2 >= 30) grupoAsignado = 1;
+                        else grupoAsignado = Math.random() < 0.5 ? 1 : 2;
 
-                    datosUsuario.grupoInterno = grupoAsignado;
+                        datosUsuario.grupoInterno = grupoAsignado;
+                        const actualizacionGrupo = grupoAsignado === 1 ? { grupo1: increment(1), registradoRonda1: true } : { grupo2: increment(1), registradoRonda1: true };
+                        await updateDoc(conteoRef, actualizacionGrupo);
+                    }
 
-                    await setDoc(doc(db, "participantes", `${datosUsuario.id}_Ronda1`), {
+                    await setDoc(doc(db, "participantes", `${datosUsuario.id}_Ronda${datosUsuario.rondaActual}`), {
                         idParticipante: datosUsuario.id,
-                        ronda: "Ronda 1",
+                        ronda: `Ronda ${datosUsuario.rondaActual}`,
                         sexo: datosUsuario.sexo,
                         edad: datosUsuario.edad,
                         areaEstudio: datosUsuario.areaEstudio,
@@ -770,9 +843,6 @@
                         grupoInterno: datosUsuario.grupoInterno,
                         estado: "cuestionario_completado"
                     }, { merge: true });
-
-                    const actualizacionGrupo = grupoAsignado === 1 ? { grupo1: increment(1) } : { grupo2: increment(1) };
-                    await updateDoc(conteoRef, actualizacionGrupo);
                 } catch (error) {
                     console.error("Error en segundo plano con Firebase:", error);
                 }
@@ -780,8 +850,6 @@
         };
 
         function prepararPantallaInstrucciones() {
-            document.getElementById('titulo-instrucciones').innerText =
-                `Fase de Obtención de Ingresos (Ronda ${datosUsuario.rondaActual})`;
             mostrarSolo('pantalla-instrucciones');
         }
 
@@ -865,47 +933,34 @@
             if (r2 === rondaConfig.t2.correcta) buenas++;
             if (r3 === rondaConfig.t3.correcta) buenas++;
 
-            const puntosObtenidosRonda = 1000 + (buenas * 1000);
-            datosUsuario.puntosRondaActual = puntosObtenidosRonda;
+            datosUsuario.buenasUltimaRonda = buenas;
 
-            mostrarSolo('pantalla-resultado');
+            let puntosBase = buenas * 800;
+            let puntosObtenidosRonda = 0;
 
-            let mensajeSiguientePaso = "";
-            let botonSiguiente = "";
-            let esSegundaVezSinAciertos = false;
-
-            if (buenas === 0) {
-                datosUsuario.rondasSinAciertos++;
-
-                if (datosUsuario.rondasSinAciertos >= 2) {
-                    esSegundaVezSinAciertos = true;
-                    mensajeSiguientePaso = `
-                        <div class="caja-advertencia" style="background-color:#fdecea; border-color:#c0392b;">
-                            <p style="margin:0; font-weight:bold; color:#c0392b;">Has fallado nuevamente las 3 tareas de esta ronda.</p>
-                            <p style="margin-top:8px; font-size:15px; font-family: Arial, sans-serif; color:#444;">Por política del estudio, esto significa que quedas descalificado/a de la participación.</p>
-                        </div>`;
-                    botonSiguiente = `<button onclick="descalificarParticipante()">Continuar</button>`;
-                } else {
-                    mensajeSiguientePaso = `
-                        <div class="caja-advertencia">
-                            <p style="margin:0; font-weight:bold; color:#b9770e;">No acertaste ninguna respuesta.</p>
-                            <p style="margin-top:8px; font-size:15px; font-family: Arial, sans-serif; color:#444;">En esta ronda no podrás negociar un producto. <strong>Advertencia:</strong> necesitas al menos una respuesta correcta por ronda. Si vuelves a fallar las 3 tareas en otra ronda, serás descalificado/a del estudio.</p>
-                        </div>`;
-                    botonSiguiente = `<button onclick="saltarNegociacion()">Continuar</button>`;
+            if (datosUsuario.grupoInterno === 2) {
+                if (buenas === 0) {
+                    puntosObtenidosRonda = 500;
+                } else if (buenas === 1) {
+                    puntosObtenidosRonda = Math.round(800 * 1.10);
+                } else if (buenas === 2) {
+                    puntosObtenidosRonda = Math.round((800 * 2) * 1.20);
+                } else if (buenas === 3) {
+                    puntosObtenidosRonda = Math.round((800 * 3) * 1.30);
                 }
             } else {
-                botonSiguiente = `<button onclick="iniciarFaseNegociacion()">Continuar a la fase de negociación</button>`;
+                puntosObtenidosRonda = 1000 + (buenas * 1000);
             }
 
-            document.getElementById('caja-resultado-texto').innerHTML = `
-                <p style="margin: 0; color: #27ae60; font-weight: bold;">¡Ronda ${datosUsuario.rondaActual} completada con éxito!</p>
-                <p style="margin-top: 10px; font-size: 18px;">Respuestas correctas: <strong>${buenas} / 3</strong></p>
-                <p style="margin-top: 10px; font-size: 18px;">Puntaje obtenido en esta ronda: <strong>${puntosObtenidosRonda} puntos</strong> (1.000 base + ${buenas * 1000} por aciertos).</p>
-                ${mensajeSiguientePaso}
-            `;
+            datosUsuario.puntosRondaActual = puntosObtenidosRonda;
 
-            document.getElementById('input-dev-puntos').value = puntosObtenidosRonda;
-            document.getElementById('contenedor-boton-siguiente').innerHTML = botonSiguiente;
+            let esSegundaVezSinAciertos = false;
+            if (buenas === 0) {
+                datosUsuario.rondasSinAciertos++;
+                if (datosUsuario.rondasSinAciertos >= 2) {
+                    esSegundaVezSinAciertos = true;
+                }
+            }
 
             guardarRonda({
                 respuestasTareas: { tarea1: r1, tarea2: r2, tarea3: r3 },
@@ -914,6 +969,86 @@
                 estado: esSegundaVezSinAciertos ? "descalificado_0_aciertos" : "tareas_completadas",
                 timestamp: new Date().toISOString()
             });
+
+            document.getElementById('input-dev-puntos').value = puntosObtenidosRonda;
+
+            // Paso por la Pantalla 8 (Resultados)
+            mostrarSolo('pantalla-resultado');
+            let mensajeSiguientePaso = "";
+            let botonSiguiente = "";
+
+            if (buenas === 0 && esSegundaVezSinAciertos) {
+                document.getElementById('caja-resultado-texto').innerHTML = `
+                    <p style="margin: 0; color: #c0392b; font-weight: bold;">Has fallado nuevamente las 3 tareas de esta ronda.</p>
+                    <p style="margin-top: 8px; font-size: 15px; font-family: Arial, sans-serif; color: #444;">Por política del estudio, esto significa que quedas descalificado/a de la participación.</p>
+                `;
+                document.getElementById('contenedor-boton-siguiente').innerHTML = `<button onclick="descalificarParticipante()">Continuar</button>`;
+                return;
+            }
+
+            if (buenas === 0) {
+                mensajeSiguientePaso = `
+                    <div class="caja-advertencia">
+                        <p style="margin:0; font-weight:bold; color:#b9770e;">No acertaste ninguna respuesta.</p>
+                        <p style="margin-top:8px; font-size:15px; font-family: Arial, sans-serif; color:#444;"><strong>Advertencia:</strong> necesitas al menos una respuesta correcta por ronda. Si vuelves a fallar las 3 tareas en otra ronda, serás descalificado/a del estudio.</p>
+                    </div>`;
+            }
+
+            document.getElementById('caja-resultado-texto').innerHTML = `
+                <p style="margin: 0; color: #27ae60; font-weight: bold;">¡Ronda ${datosUsuario.rondaActual} completada con éxito!</p>
+                <p style="margin-top: 10px; font-size: 18px;">Respuestas correctas: <strong>${buenas} / 3</strong></p>
+                <p style="margin-top: 10px; font-size: 18px;">Puntaje base obtenido: <strong>${puntosBase} puntos</strong></p>
+                ${mensajeSiguientePaso}
+            `;
+
+            if (datosUsuario.grupoInterno === 2) {
+                botonSiguiente = `<button onclick="mostrarPantallaSorpresa(${buenas})">Continuar a la fase de negociación</button>`;
+            } else {
+                if (buenas === 0) {
+                    botonSiguiente = `<button onclick="saltarNegociacion()">Continuar</button>`;
+                } else {
+                    botonSiguiente = `<button onclick="iniciarFaseNegociacion()">Continuar a la fase de negociación</button>`;
+                }
+            }
+            document.getElementById('contenedor-boton-siguiente').innerHTML = botonSiguiente;
+        };
+
+        window.mostrarPantallaSorpresa = function(buenas) {
+            mostrarSolo('pantalla-bonificacion-sorpresa');
+            const cajaTexto = document.getElementById('caja-bonificacion-texto');
+            const tituloSorpresa = document.getElementById('titulo-bonificacion');
+
+            let mensajeNarrativo = "";
+
+            if (buenas > 0) {
+                dispararConfetti();
+                tituloSorpresa.style.color = "#27ae60";
+
+                if (buenas === 1) {
+                    mensajeNarrativo = `¡Sorpresa! Al haber obtenido una respuesta correcta, el sistema ha determinado que esta pregunta era la clave para otorgarte un <strong>10% extra</strong> en tus puntos.<br><br>Se te han sumado <strong>80 puntos</strong> (que corresponden al 10% extra), dándote un <strong>Puntaje total obtenido de 880 puntos</strong>.`;
+                } else if (buenas === 2) {
+                    mensajeNarrativo = `¡Sorpresa! De tus dos respuestas correctas, una de ellas fue la elegida para bonificarte con un <strong>20% extra</strong> en tus puntos. ¡Gran trabajo!<br><br>Se te han sumado <strong>320 puntos</strong> (que corresponden al 20% extra sobre el total base), dándote un <strong>Puntaje total obtenido de 1.920 puntos</strong>.`;
+                } else if (buenas === 3) {
+                    mensajeNarrativo = `¡Sorpresa total! Tuviste un desempeño perfecto de 3 respuestas correctas, y una de ellas traía el premio mayor: ¡Te llevas un <strong>30% extra</strong> en tus puntos!<br><br>Se te han sumado <strong>720 puntos</strong> (que corresponden al 30% extra sobre el total base), dándote un <strong>Puntaje total obtenido de 3.120 puntos</strong>.`;
+                }
+            } else {
+                limpiarConfeti();
+                tituloSorpresa.style.color = "#d35400";
+                tituloSorpresa.innerText = "Resultado de Participación";
+
+                mensajeNarrativo = `¡Buen intento! Aunque no registraste respuestas correctas, te llevas <strong>500 puntos</strong> como base por tu participación y esfuerzo.<br><br><strong>Puntaje total obtenido: 500 puntos</strong>.`;
+            }
+
+            cajaTexto.innerHTML = `<p style="margin: 0; font-family: Arial, sans-serif; font-size: 17px; line-height: 1.5; color: #333;">${mensajeNarrativo}</p>`;
+        };
+
+        window.continuarDesdeBonificacion = function() {
+            limpiarConfeti();
+            if (datosUsuario.buenasUltimaRonda === 0) {
+                saltarNegociacion();
+            } else {
+                iniciarFaseNegociacion();
+            }
         };
 
         window.saltarNegociacion = function() {
@@ -959,6 +1094,7 @@
 
             precioBaseProducto = Math.round(datosUsuario.puntosRondaActual * productoSeleccionado.porcentaje);
             precioPedidoIA = Math.min(precioBaseProducto, datosUsuario.puntosRondaActual);
+            const minPermitido = Math.round(precioBaseProducto * OFERTA_MINIMA_PORC);
 
             document.getElementById('titulo-negociacion').innerText = `Fase de Negociación (Ronda ${datosUsuario.rondaActual})`;
             document.getElementById('info-producto-asociado').innerText =
@@ -971,7 +1107,7 @@
             imgProducto.src = productoSeleccionado.imagen;
 
             document.getElementById('caja-chat-negociacion').innerHTML =
-                `<p style="margin: 0; color: #2c3e50;"><strong>Asistente Virtual (IA):</strong> ¡Hola! Estás negociando por el artículo <strong>${productoSeleccionado.nombre}</strong>. Tienes <strong>${datosUsuario.puntosRondaActual} puntos</strong> ganados en esta ronda. Haz tu primera oferta.</p>`;
+                `<p style="margin: 0; color: #2c3e50;"><strong>Asistente Virtual (IA):</strong> ¡Hola! Estás negociando por el artículo <strong>${productoSeleccionado.nombre}</strong>. Tienes <strong>${datosUsuario.puntosRondaActual} puntos</strong> cargados en tu perfil. Tu oferta no puede ser menor a <strong>${minPermitido} pts</strong> (mínimo permitido). Haz tu primera oferta.</p>`;
 
             document.getElementById('label-etapa-negociacion').innerText = "Etapa 1 de 3: Envía tu oferta";
             document.getElementById('input-oferta-usuario').value = "";
@@ -1000,8 +1136,8 @@
                 return;
             }
 
-            if (etapaNegociacion === 3 && ofertaVal <= ultimaOfertaUsuario) {
-                errorOferta.innerText = `En la Etapa 3, tu oferta debe ser estrictamente mayor a tu oferta anterior (${ultimaOfertaUsuario} pts).`;
+            if (etapaNegociacion > 1 && ofertaVal <= ultimaOfertaUsuario) {
+                errorOferta.innerText = `Tu oferta no puede ser igual o menor a tu propuesta anterior (${ultimaOfertaUsuario} pts). Cada nueva oferta debe ser estrictamente superior (ej. ${ultimaOfertaUsuario + 1} o más).`;
                 errorOferta.style.display = 'block';
                 return;
             }
@@ -1040,9 +1176,9 @@
                     etapaNegociacion++;
                     if (etapaNegociacion === 2) {
                         cajaChat.innerHTML += `<p style="margin: 8px 0 0 0; color: #c0392b;"><strong>Asistente Virtual (IA):</strong> Tu oferta es baja, pero podemos acercarnos. Mi contraoferta es de <strong>${contraofertaIA} puntos</strong>. Entramos a la <strong>Etapa 2</strong>.</p>`;
-                        document.getElementById('label-etapa-negociacion').innerText = "Etapa 2 de 3: Envía tu nueva oferta";
+                        document.getElementById('label-etapa-negociacion').innerText = "Etapa 2 de 3: Envía tu nueva oferta (mayor a la anterior)";
                     } else if (etapaNegociacion === 3) {
-                        cajaChat.innerHTML += `<p style="margin: 8px 0 0 0; color: #c0392b;"><strong>Asistente Virtual (IA):</strong> Última oportunidad. Mi contraoferta es <strong>${contraofertaIA} puntos</strong>. Envía tu oferta final en la <strong>Etapa 3</strong> (debe ser mayor a la anterior).</p>`;
+                        cajaChat.innerHTML += `<p style="margin: 8px 0 0 0; color: #c0392b;"><strong>Asistente Virtual (IA):</strong> Última oportunidad. Mi contraoferta es <strong>${contraofertaIA} puntos</strong>. Envía tu oferta final en la <strong>Etapa 3</strong> (debe ser mayor a tu oferta anterior).</p>`;
                         document.getElementById('label-etapa-negociacion').innerText = "Etapa 3 de 3: Oferta final (Debe ser mayor a la anterior)";
                     }
                 }
@@ -1086,6 +1222,7 @@
             }
         }
 
+        // REINICIO DIRECTO A PANTALLA 2 (PREGUNTAS) AL TERMINAR RONDA, SIN PASAR POR INSTRUCCIONES GENERALES
         window.reiniciarProcesoNuevaRonda = function(nuevaRonda) {
             datosUsuario.rondaActual = nuevaRonda;
             datosUsuario.puntosRondaActual = 0;
@@ -1102,7 +1239,7 @@
             const btnRonda = document.getElementById('btn-dev-ronda');
             if (btnRonda) btnRonda.innerText = nuevaRonda;
 
-            prepararPantallaInstrucciones();
+            prepararPantallaPreguntas();
         };
 
         async function obtenerExcedentes() {
